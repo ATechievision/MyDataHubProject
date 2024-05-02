@@ -1,0 +1,67 @@
+version: '1'
+source: DataHub
+owners:
+  users:
+    - eriksikkema
+    - gilbertvangriensven
+    - ellekevisser
+url: "https://github.com/datahub-project/datahub/"
+nodes:
+  - name: stops_1
+    description: Provides information about stops data associated with the Bus,like Stop ID, Stop Name, Stop Code
+    knowledge_links:
+      - label: Wiki link for classification
+        url: "https://en.wikipedia.org/wiki/Transport_in_the_Netherlands"
+    custom_properties:
+      is_confidential: 'false'
+    terms:
+      - name: stopcode
+        description: Unique number of the stop
+      - name: placecode
+        description: Place code derived from city and street name
+      - name: stopshortname
+        description: Name of the stop
+      - name: stopfullname
+        description: Full Name of the stop along with city name
+      - name: stopid
+        description: ID associated with stop
+      - name: areacode
+        description: Unique identification of the City
+      - name: departurestop
+        description: This stop is the departure stop/stand
+  - name: stations_1
+    description: Provides information about Bus Stations ,like Station ID, Station Name, Station code
+    terms:
+      - name: stationcode
+        description: Unique code of the station
+      - name: stationname
+        description: Name of the Station
+      - name: stationid
+        description: Unique identifiacation of the Station
+  - name: stoplocation_1
+    description: Provides information about stop locations ,like Stop code,Since when the the stop is valid and till what duartion it will be valid and GPS coordinates
+    terms:
+      - name: validsince
+        description: Timestamp-The date and time from which the location is valid
+      - name: validuntil
+        description: A time period until which the stop location is valid
+      - name: coordinatex
+        description: It tells how far to the left or right point lies along the X-axis (Longitude)/GPS Coordinates(Co-ordinates in RD)
+      - name: coordinatey
+        description: It tells how far to the left or right  point lies along the Y-axis (Latitude)/GPS Coordinates(Co-ordinates in RD)
+  - name: places_1
+    description: It define places, like placecode,place name,place id,place full name
+    terms:
+      - name: placename
+        description: It refers to the stop name /place name
+      - name: placeid
+        description: Unique identifier of the  place
+      - name: placefullname
+        description: Full name of the Stop along with the area name
+  - name: virtualstops_1
+    description: Provides the information about stops,unknown check in and Unknown check out informations
+    terms:
+      - name: unknowncheckinandout
+        description: Defines the unknown check-in and check-out
+      - name: stopshortname
+        description: The shortname of the virtual stop name

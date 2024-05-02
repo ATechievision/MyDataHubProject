@@ -1,0 +1,5 @@
+source:
+  type: csv-enricher
+  config:
+    # Coordinates
+    filename: tag-term-entity-mapping.csv
