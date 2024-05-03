@@ -28,7 +28,7 @@ jobs:
         run: chmod 600 $HOME/.ssh/known_hosts
         
       - name: Copy files to EC2 instance
-        run: scp -r ./MyDataHubProject/metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/MyDataHubProject/metadata_ingestion
+        run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/MyDataHubProject/metadata_ingestion
 
       - name: Run DataHub ingest command 
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /MyDataHubProject/metadata_ingestion/glossary_yaml_ingestion && datahub ingest -c recipe.yml"
