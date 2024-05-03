@@ -24,12 +24,6 @@ jobs:
       - name: Verify EC2 host key
         run: ssh-keyscan -H ${{ secrets.EC2_HOST }} >> $HOME/.ssh/known_hosts
 
-      - name: Check SSH agent
-        run: ssh-add -l
-        
-      - name: List files in ~/.ssh directory
-        run: ls $HOME/.ssh
-        
       - name: Set permissions on SSH private key
         run: chmod 600 $HOME/.ssh/known_hosts
         
