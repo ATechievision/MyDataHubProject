@@ -31,7 +31,7 @@ jobs:
         run: ls $HOME/.ssh
         
       - name: Set permissions on SSH private key
-        run: chmod 600 $HOME/.ssh/id_rsa
+        run: chmod 600 $HOME/.ssh/known_hosts
         
       - name: Copy files to EC2 instance
         run: scp -r ./MyDataHubProject/metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/MyDataHubProject/datahub_ingestion
