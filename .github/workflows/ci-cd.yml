@@ -27,6 +27,9 @@ jobs:
       - name: Check SSH agent
         run: ssh-add -l
         
+      - name: List files in ~/.ssh directory
+        run: ls $HOME/.ssh
+        
       - name: Set permissions on SSH private key
         run: chmod 600 $HOME/.ssh/id_rsa
         
