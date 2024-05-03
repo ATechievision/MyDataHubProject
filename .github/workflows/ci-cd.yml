@@ -26,7 +26,10 @@ jobs:
 
       - name: Check SSH agent
         run: ssh-add -l
-
+        
+      - name: Set permissions on SSH private key
+        run: chmod 600 $HOME/.ssh/id_rsa
+        
       - name: Copy files to EC2 instance
         run: scp -r ./MyDataHubProject/metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/MyDataHubProject/datahub_ingestion
 
