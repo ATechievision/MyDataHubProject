@@ -24,6 +24,9 @@ jobs:
       - name: Verify EC2 host key
         run: ssh-keyscan -H ${{ secrets.EC2_HOST }} >> $HOME/.ssh/known_hosts
 
+      - name: Check SSH agent
+        run: ssh-add -l
+
       - name: Copy files to EC2 instance
         run: scp -r ./MyDataHubProject/metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/MyDataHubProject/datahub_ingestion
 
