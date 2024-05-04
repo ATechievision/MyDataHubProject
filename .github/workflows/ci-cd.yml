@@ -29,35 +29,9 @@ jobs:
         
       - name: Copy files to EC2 instance
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
-        # This step always runs since it copies files
-  
-      - name: Check if previous commit exists
-        id: prev_commit_exists
-        run: |
-          if git show-ref --quiet --verify -- HEAD^; then
-            echo "::set-output name=prev_commit_exists::true"
-          else
-            echo "::set-output name=prev_commit_exists::false"
-          fi
 
-      - name: Check for changes in glossary_yaml_ingestion
-        id: glossary_changes
-        run: |
-          if [[ "${{ steps.prev_commit_exists.outputs.prev_commit_exists }}" == "false" ]]; then
-            echo "No previous commit found (initial commit)"
-            echo "::set-output name=changes::true"
-          else
-            if git diff --quiet --exit-code HEAD^ -- glossary_yaml_ingestion; then
-              echo "No changes in glossary_yaml_ingestion"
-              echo "::set-output name=changes::false"
-            else
-              echo "Changes detected in glossary_yaml_ingestion"
-              echo "::set-output name=changes::true"
-            fi
-          fi
-          
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: ${{ github.event_name == 'push' && steps.glossary_changes.outputs.changes == 'true' }}
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
-      # Add a similar block for the map_csv_ingestion directory
+      - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
+        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
