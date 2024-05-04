@@ -1,4 +1,4 @@
-name: Deploy to DataHub running on EC2
+name: Deploy to EC2
 
 on:
   push:
@@ -31,15 +31,11 @@ jobs:
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: |
-          github.event_name == 'push' &&
-          steps.changed_files.outputs.contains_glossary_yaml == 'true'
+        if: steps.changed_files.outputs.contains_glossary_yaml == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: |
-          github.event_name == 'push' &&
-          steps.changed_files.outputs.contains_map_csv == 'true'
+        if: steps.changed_files.outputs.contains_map_csv == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
 
   get_changed_files:
