@@ -31,4 +31,4 @@ jobs:
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
       - name: Run DataHub ingest command 
-        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/metadata_ingestion/glossary_yaml_ingestion && datahub ingest -c recipe.yml"
+        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/metadata_ingestion/glossary_yaml_ingestion && cat recipe.yml"
