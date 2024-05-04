@@ -2,9 +2,7 @@ version: '1'
 source: DataHub
 owners:
   users:
-    - eriksikkema
-    - gilbertvangriensven
-    - ellekevisser
+    - asatapat
 url: "https://github.com/datahub-project/datahub/"
 nodes:
   - name: stops_1
