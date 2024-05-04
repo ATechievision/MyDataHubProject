@@ -42,7 +42,7 @@ jobs:
             echo "::set-output name=changes::true"
           fi
 
-      - name: Run DataHub ingest command for creating business glossary terms/term groups
+      - name: Run DataHub ingest command for creating business glossary terms/term group
         if: ${{ github.event_name == 'push' && steps.glossary_changes.outputs.changes == 'true' }}
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
