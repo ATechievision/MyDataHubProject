@@ -34,12 +34,12 @@ jobs:
       - name: Check for changes in glossary_yaml_ingestion
         id: glossary_changes
         run: |
-          if git diff --quiet HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion; then
-            echo "No changes in glossary_yaml_ingestion"
-            echo "::set-output name=changes::false"
-          else
+          if git diff --name-only HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion | grep -qE '.'; then
             echo "Changes detected in glossary_yaml_ingestion"
             echo "::set-output name=changes::true"
+          else
+            echo "No changes in glossary_yaml_ingestion"
+            echo "::set-output name=changes::false"
           fi
 
       - name: Run DataHub ingest command for creating business glossary terms/term groups
@@ -49,12 +49,12 @@ jobs:
       - name: Check for changes in map_csv_ingestion
         id: map_changes
         run: |
-          if git diff --quiet HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/map_csv_ingestion; then
-            echo "No changes in map_csv_ingestion"
-            echo "::set-output name=changes::false"
-          else
+          if git diff --name-only HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/map_csv_ingestion | grep -qE '.'; then
             echo "Changes detected in map_csv_ingestion"
             echo "::set-output name=changes::true"
+          else
+            echo "No changes in map_csv_ingestion"
+            echo "::set-output name=changes::false"
           fi
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
