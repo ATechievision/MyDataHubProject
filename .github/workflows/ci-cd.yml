@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  copy_files_to_EC2:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,7 +33,8 @@ jobs:
       - name: Check for changed files
         id: check_files
         run: |
-          changed_files=$(git diff --name-only HEAD^ HEAD)
+          base_branch=$(git merge-base HEAD ${{ github.event.before }})
+          changed_files=$(git diff --name-only $base_branch HEAD)
           if echo "$changed_files" | grep -q '^metadata_ingestion/glossary_yaml_ingestion/'; then
             echo "contains_glossary_yaml=true" >> $GITHUB_ENV
           fi
@@ -42,7 +43,7 @@ jobs:
           fi
           
   run_ingestion:
-    needs: [deploy]
+    needs: [copy_files_to_EC2]
     runs-on: ubuntu-latest
     steps:
       - name: Run DataHub ingest command for creating business glossary terms/term groups
