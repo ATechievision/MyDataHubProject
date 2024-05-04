@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to DataHub running on EC2
 
 on:
   push:
@@ -30,27 +30,8 @@ jobs:
       - name: Copy files to EC2 instance
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
-      - name: Check for changes in glossary_yaml_ingestion/businessglossary-poc.yml
-        id: glossary_changes
-        run: |
-            parent_commit=$(git rev-list -n 1 --parents HEAD)
-            if [[ "$(echo $parent_commit | wc -w)" -eq "1" ]]; then
-            git diff --name-only 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD metadata_ingestion/glossary_yaml_ingestion/businessglossary-poc.yml
-            else
-            git diff --name-only HEAD^ HEAD metadata_ingestion/glossary_yaml_ingestion/businessglossary-poc.yml
-            fi
-        continue-on-error: true
-
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: steps.glossary_changes.outputs.stdout != ''
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
-      - name: Check for changes in map_csv_ingestion/tag-term-entity-mapping.csv
-        id: map_changes
-        run: |
-          git diff --name-only HEAD^ HEAD metadata_ingestion/map_csv_ingestion/tag-term-entity-mapping.csv
-        continue-on-error: true
-
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: steps.map_changes.outputs.stdout != ''
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
