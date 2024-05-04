@@ -3,7 +3,7 @@ source: DataHub
 owners:
   users:
     - asatapat
-    - nsatapat
+    - nsatapath
 url: "https://github.com/datahub-project/datahub/"
 nodes:
   - name: stops_1
