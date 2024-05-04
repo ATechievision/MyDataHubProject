@@ -1,3 +1,3 @@
 resource,subresource,glossary_terms,tags,owners,ownership_type,description,domain,ownership_type_urn
-"urn:li:dataset:(urn:li:dataPlatform:snowflake,transdev.stg.csx_concessies,PROD)",created_by,[urn:li:glossaryTerm:41516e310acbfd9076fffc2c98d2d1a3],[urn:li:tag:geldigeperiode],,,"Testing mapping of terms to entity through csv",urn:li:domain:0b87603e-6d4a-416f-aec0-f328e7be6e65,
+"urn:li:dataset:(urn:li:dataPlatform:snowflake,transdev.stg.csx_concessies,PROD)",createdby,[urn:li:glossaryTerm:41516e310acbfd9076fffc2c98d2d1a3],[urn:li:tag:geldigeperiode],,,"Testing mapping of terms to entity through csv",urn:li:domain:0b87603e-6d4a-416f-aec0-f328e7be6e65,
 "urn:li:dataset:(urn:li:dataPlatform:snowflake,transdev.stg.csx_concessies,PROD)",telefoonnummer_toelichting,[urn:li:glossaryTerm:d89393e6b47c6b25a305e6f9cee1d9bd],,,,"test description",
