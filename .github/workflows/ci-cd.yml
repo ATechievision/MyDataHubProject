@@ -30,32 +30,25 @@ jobs:
       - name: Copy files to EC2 instance
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
+      - name: Check for changed files
+        id: check_files
+        run: |
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          if echo "$changed_files" | grep -q '^metadata_ingestion/glossary_yaml_ingestion/'; then
+            echo "contains_glossary_yaml=true" >> $GITHUB_ENV
+          fi
+          if echo "$changed_files" | grep -q '^map_csv_ingestion/'; then
+            echo "contains_map_csv=true" >> $GITHUB_ENV
+          fi
+          
+  run_ingestion:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: steps.get_changed_files.outputs.contains_glossary_yaml == 'true'
+        if: env.contains_glossary_yaml == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: steps.get_changed_files.outputs.contains_map_csv == 'true'
+        if: env.contains_map_csv == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
-
-  get_changed_files:
-    runs-on: ubuntu-latest
-    outputs:
-      contains_glossary_yaml: ${{ steps.check.outputs.contains_glossary_yaml }}
-      contains_map_csv: ${{ steps.check.outputs.contains_map_csv }}
-    steps:
-      - name: Check for changed files
-        id: check
-        run: |
-          cd $GITHUB_WORKSPACE
-          if git diff-tree --quiet HEAD^ HEAD --name-only | grep -qE '^metadata_ingestion/glossary_yaml_ingestion/'; then
-            echo "contains_glossary_yaml=true" >> $GITHUB_ENV
-          else
-            echo "contains_glossary_yaml=false" >> $GITHUB_ENV
-          fi
-          
-          if git diff-tree --quiet HEAD^ HEAD --name-only | grep -qE '^map_csv_ingestion/'; then
-            echo "contains_map_csv=true" >> $GITHUB_ENV
-          else
-            echo "contains_map_csv=false" >> $GITHUB_ENV
-          fi
