@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  copy_files_to_EC2:
+  copy_file_to_EC2:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,7 +38,7 @@ jobs:
           echo "$changed_files" | grep -q '^map_csv_ingestion/' && echo "contains_map_csv=true" >> $GITHUB_ENV || true
           
   run_ingestion:
-    needs: [copy_files_to_EC2]
+    needs: [copy_file_to_EC2]
     runs-on: ubuntu-latest
     steps:
       - name: Run DataHub ingest command for creating business glossary terms/term groups
