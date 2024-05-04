@@ -30,10 +30,22 @@ jobs:
       - name: Copy files to EC2 instance
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
+      - name: Check for changes in glossary_yaml_ingestion
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^metadata_ingestion/glossary_yaml_ingestion/'; then
+            echo "contains_glossary_yaml=true" >> $GITHUB_ENV
+          fi
+
+      - name: Check for changes in map_csv_ingestion
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^map_csv_ingestion/'; then
+            echo "contains_map_csv=true" >> $GITHUB_ENV
+          fi
+
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000' && github.event.commits.*.modified contains 'metadata_ingestion/glossary_yaml_ingestion'
+        if: env.contains_glossary_yaml == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000' && github.event.commits.*.modified contains 'map_csv_ingestion'
+        if: env.contains_map_csv == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
