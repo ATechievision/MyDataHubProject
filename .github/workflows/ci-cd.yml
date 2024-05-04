@@ -31,17 +31,32 @@ jobs:
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
         # This step always runs since it copies files
 
+      - name: Check for changes in glossary_yaml_ingestion
+        id: glossary_changes
+        run: |
+          if git diff --quiet HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion; then
+            echo "No changes in glossary_yaml_ingestion"
+            echo "::set-output name=changes::false"
+          else
+            echo "Changes detected in glossary_yaml_ingestion"
+            echo "::set-output name=changes::true"
+          fi
+
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: ${{ github.event_name == 'push' && needs_update(github.event.commits, '/home/ubuntu/MyDataHubProject/glossary_yaml_ingestion') }}
+        if: ${{ github.event_name == 'push' && steps.glossary_changes.outputs.changes == 'true' }}
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
-      - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: ${{ github.event_name == 'push' && needs_update(github.event.commits, '/home/ubuntu/MyDataHubProject/map_csv_ingestion') }}
-        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
+      - name: Check for changes in map_csv_ingestion
+        id: map_changes
+        run: |
+          if git diff --quiet HEAD^ HEAD -- /home/ubuntu/MyDataHubProject/map_csv_ingestion; then
+            echo "No changes in map_csv_ingestion"
+            echo "::set-output name=changes::false"
+          else
+            echo "Changes detected in map_csv_ingestion"
+            echo "::set-output name=changes::true"
+          fi
 
-# Function to check if a specific directory has been updated in any commit
-# Returns true if any commit contains changes in the specified directory, otherwise false
-# Commits is the array of commit objects in the push event
-# Directory is the path to the directory to check for updates
-# Note: This function needs to be implemented using a custom action or script
-# since GitHub Actions YAML does not support custom functions directly.
+      - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
+        if: ${{ github.event_name == 'push' && steps.map_changes.outputs.changes == 'true' }}
+        run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
