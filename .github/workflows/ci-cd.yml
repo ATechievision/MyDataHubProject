@@ -33,7 +33,7 @@ jobs:
       - name: Check for changes in glossary_yaml_ingestion/businessglossary-poc.yml
         id: glossary_changes
         run: |
-          git diff --name-only HEAD^ HEAD glossary_yaml_ingestion/businessglossary-poc.yml
+          git diff --name-only HEAD^ HEAD metadata_ingestion/glossary_yaml_ingestion/businessglossary-poc.yml
         continue-on-error: true
 
       - name: Run DataHub ingest command for creating business glossary terms/term groups
@@ -43,7 +43,7 @@ jobs:
       - name: Check for changes in map_csv_ingestion/tag-term-entity-mapping.csv
         id: map_changes
         run: |
-          git diff --name-only HEAD^ HEAD map_csv_ingestion/tag-term-entity-mapping.csv
+          git diff --name-only HEAD^ HEAD metadata_ingestion/map_csv_ingestion/tag-term-entity-mapping.csv
         continue-on-error: true
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
