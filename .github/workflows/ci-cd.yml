@@ -31,11 +31,11 @@ jobs:
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
       - name: Run DataHub ingest command for creating business glossary terms/term groups
-        if: steps.changed_files.outputs.contains_glossary_yaml == 'true'
+        if: steps.get_changed_files.outputs.contains_glossary_yaml == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
-        if: steps.changed_files.outputs.contains_map_csv == 'true'
+        if: steps.get_changed_files.outputs.contains_map_csv == 'true'
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
 
   get_changed_files:
@@ -47,14 +47,15 @@ jobs:
       - name: Check for changed files
         id: check
         run: |
+          cd $GITHUB_WORKSPACE
           if git diff-tree --quiet HEAD^ HEAD --name-only | grep -qE '^metadata_ingestion/glossary_yaml_ingestion/'; then
-            echo "::set-output name=contains_glossary_yaml::true"
+            echo "contains_glossary_yaml=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=contains_glossary_yaml::false"
+            echo "contains_glossary_yaml=false" >> $GITHUB_ENV
           fi
           
           if git diff-tree --quiet HEAD^ HEAD --name-only | grep -qE '^map_csv_ingestion/'; then
-            echo "::set-output name=contains_map_csv::true"
+            echo "contains_map_csv=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=contains_map_csv::false"
+            echo "contains_map_csv=false" >> $GITHUB_ENV
           fi
