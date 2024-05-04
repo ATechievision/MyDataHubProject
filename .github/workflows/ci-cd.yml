@@ -30,8 +30,22 @@ jobs:
       - name: Copy files to EC2 instance
         run: scp -r ./metadata_ingestion ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/MyDataHubProject
 
+      - name: Check for changes in glossary_yaml_ingestion/businessglossary-poc.yml
+        id: glossary_changes
+        run: |
+          git diff --name-only HEAD^ HEAD glossary_yaml_ingestion/businessglossary-poc.yml
+        continue-on-error: true
+
       - name: Run DataHub ingest command for creating business glossary terms/term groups
+        if: steps.glossary_changes.outputs.stdout != ''
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/glossary_yaml_ingestion && cat recipe.yml"
 
+      - name: Check for changes in map_csv_ingestion/tag-term-entity-mapping.csv
+        id: map_changes
+        run: |
+          git diff --name-only HEAD^ HEAD map_csv_ingestion/tag-term-entity-mapping.csv
+        continue-on-error: true
+
       - name: Run DataHub ingest command for mapping terms/tags to snowflake entity
+        if: steps.map_changes.outputs.stdout != ''
         run: ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/MyDataHubProject/map_csv_ingestion && cat recipe.yml"
