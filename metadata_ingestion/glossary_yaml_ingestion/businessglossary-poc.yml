@@ -64,3 +64,10 @@ nodes:
         description: Defines the unknown check-in and check-out
       - name: stopshortname
         description: The shortname of the virtual stop name
+  - name: buslines_1
+    description: Provides the information about bus lines.
+    terms:
+      - name: line_1
+        description: Defines the bus line_1 information.
+      - name: line_2
+        description: Defines the bus line_2 information.        
