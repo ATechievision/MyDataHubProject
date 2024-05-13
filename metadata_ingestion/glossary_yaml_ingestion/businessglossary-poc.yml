@@ -70,4 +70,6 @@ nodes:
       - name: line_1
         description: Defines the bus line_1 information.
       - name: line_2
-        description: Defines the bus line_2 information.        
+        description: Defines the bus line_2 information.  
+      - name: line_3
+        description: Defines the bus line_3 information.          
